@@ -1,0 +1,31 @@
+[
+    {
+        "name": "Pizza",
+        "price": 100
+    },
+    {
+        "name": "Burger",
+        "price": 200
+    },
+    {
+        "name": "Ice-cream",
+        "price": 50.50
+    },
+    {
+        "name": "Brownie",
+        "price": 60.80
+    },
+    {
+        "name": "Bread",
+        "price": 20
+    },
+    {
+        "name": "Coke",
+        "price": 30
+    },
+    {
+        "name": "Garlic Bread",
+        "price": 40
+    }  
+
+]

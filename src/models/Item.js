@@ -20,4 +20,9 @@ const itemSchema = Schema({
 
 
 const Item = mongoose.model('Item', itemSchema);
+const data = require('./constants/Menu.json');
+Item.collection.insertMany(data, function(err,r) {
+    assert.equal(null, err);
+    console.log("Insert completed")
+})
 module.exports = Item;

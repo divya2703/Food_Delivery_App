@@ -13,6 +13,12 @@ const userSchema = Schema({
             unique: true,
             required: true
         },
+        hash: {
+            type: String,
+        },
+        salt: {
+            type: String
+        },
         street_address: {
             type: String,
             required: true
