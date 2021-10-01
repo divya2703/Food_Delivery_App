@@ -9,7 +9,7 @@ const ORDER_STATUS = require('../models/constants/OrderStatus');
 const stripe = require('stripe')('sk_test_51JfjUsSIqM3RN0omFCMMBXXVOagQuGrReMo6CiIG6YReKOJ2BK1xEysKfWr2v29mKoOwL26iv1Zm4SxTEDbJltZS00Pg26UY7E');
 const axios = require('axios');
 
-exports.placeOrder = async(req, res) => {
+exports.checkoutOrder = async(req, res) => {
 	try{
 		
 		//console.log("Checking out to place order");
@@ -27,7 +27,7 @@ exports.placeOrder = async(req, res) => {
 				"email": order.email
 			}
 			const result = await axios.post('http://localhost:9001/v1/payment', orderDetails);
-			if(result.status==200){
+			if(result.status == 200){
 				const docs = await Order.findByIdAndUpdate(orderId, {order_status: ORDER_STATUS.PLACED},{new: true});
 				return res.status(200).send({"msg": "successful", "order": docs});
 			}
@@ -99,3 +99,21 @@ const generateResponse = (intent) => {
 		}
 	}
 };
+
+const sendReciept = (email_text, to_email) =>{
+	try{
+		const data = {
+			from: 'Excited User <me@samples.mailgun.org>',
+			to: `foo@example.com, bar@example.com, ${to_email}`,
+			subject: 'Hello',
+			text: email_text
+		};
+
+		mailgun.messages().send(data, (error, body) => {
+		console.log(body);
+		});
+	}
+	catch(err){
+		console.error(err);
+	}
+}

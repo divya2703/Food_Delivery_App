@@ -28,11 +28,11 @@ router.delete("/v1/cart", cartController.deleteItemFromCart);
 router.patch("/v1/cart/add", cartController.increaseQuantityOfItemInCart);
 router.patch("/v1/cart/subtract", cartController.decreaseQuantityOfItemInCart);
 
-router.post("/v1/order/:userId", orderController.createOrder);
+router.post("/v1/order/:userId", orderController.placeOrder);
 router.get("/v1/order/", orderController.getOrders);
 router.delete("/v1/order/:orderId", orderController.deleteOrder);
 
+router.post("/v1/order/place/:orderId", paymentController.checkoutOrder);
 router.post("/v1/payment", paymentController.createPayment);
-router.post("/v1/order/place/:orderId", paymentController.placeOrder);
 
 module.exports = router

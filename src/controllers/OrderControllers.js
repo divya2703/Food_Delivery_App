@@ -1,8 +1,7 @@
 const Order = require('../models/Order');
 const Cart = require('../models/CartItem');
-
-const mongoose = require('mongoose');
 const User = require('../models/User');
+const mongoose = require('mongoose');
 const ObjectId =  mongoose.Types.ObjectId;
 
 const getCartForUserId = async(userId)=>{
@@ -41,6 +40,7 @@ const deleteCartForUserId = async(userId)=>{
     }
     
 }
+
 exports.getOrders= async(req, res)=>{
     try{
         const orders = await Order.find({});
@@ -52,7 +52,7 @@ exports.getOrders= async(req, res)=>{
     
 }
 
-exports.createOrder = async(req, res) =>{
+exports.placeOrder = async(req, res) =>{
 
     try{
         if(!req.params.userId){
@@ -67,7 +67,7 @@ exports.createOrder = async(req, res) =>{
             var newOrder = new Order({
                 user_id: userId,
                 email: user.email,
-                shipping_address: user.shipping_address,
+                shipping_address: user.street_address,
                 order_summary: result.cart,
                 total: result.finalPrice
             })
@@ -83,7 +83,6 @@ exports.createOrder = async(req, res) =>{
         res.status(500).send(err);
     }
 }
-
 
 exports.deleteOrder = async(req, res) =>{
 
