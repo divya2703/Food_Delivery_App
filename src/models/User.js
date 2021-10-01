@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
+// const CartItem = require('./CartItem').schema;
 const Schema = mongoose.Schema;
-
 
 const userSchema = Schema({
         name: {
@@ -22,11 +22,7 @@ const userSchema = Schema({
         street_address: {
             type: String,
             required: true
-        },
-        cart: [{
-            type: Schema.Types.ObjectId,
-            ref: 'Item'
-        }]
+        }
     }, 
     {
         timestamps: true
@@ -34,5 +30,5 @@ const userSchema = Schema({
 );
 
 
-const User = mongoose.model('User', userSchema)
-module.exports = User
+const User = mongoose.model('User', userSchema);
+module.exports = User;

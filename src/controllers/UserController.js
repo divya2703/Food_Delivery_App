@@ -2,6 +2,7 @@ const User = require('../models/User');
 const utils = require('../lib/utils');
 const passport = require('passport');
 const authMiddleware = passport.authenticate('jwt', { session: false });
+
 exports.auth = async(  req, res ) =>{
     res.status(200).json({ success: true, msg: "You are successfully authenticated to this route!"});
 }
@@ -17,6 +18,7 @@ exports.getUsers = async(req, res) =>{
                     street_address: 1,
                     createdAt: 1,
                     updatedAt: 1,
+                    
                 }
             }
         ])
@@ -79,7 +81,7 @@ exports.loginUser = async(req, res) =>{
         if (!user) {
             return res.status(401).send({ success: false, msg: "could not find user" });
         }
-        console.debug(user);
+       // console.debug(user);
         const isValid = utils.validPassword(password, user.hash, user.salt);
         console.debug(isValid)
         if (isValid) {
@@ -94,6 +96,9 @@ exports.loginUser = async(req, res) =>{
         res.status(500).json(error.message || "Internal Server Error");
     }
 }
+
+
+
 
 
 

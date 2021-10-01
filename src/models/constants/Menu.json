@@ -1,7 +1,7 @@
 [
     {
         "name": "Pizza",
-        "price": 100
+        "price": 90
     },
     {
         "name": "Burger",
@@ -21,7 +21,7 @@
     },
     {
         "name": "Coke",
-        "price": 30
+        "price": 35
     },
     {
         "name": "Garlic Bread",
