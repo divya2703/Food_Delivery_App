@@ -5,6 +5,7 @@ const MenuItem = require('../models/MenuItem');
 const mongoose = require('mongoose');
 const ObjectId =  mongoose.Types.ObjectId;
 
+//helper method
 const findItemByUserIdAndItemName = async(userId, itemName)=>{
     try{
         if(!userId || !itemName ){
@@ -68,7 +69,7 @@ exports.addItemToCart = async(req, res) => {
     }
 }
 
-
+//Get cart of a particular user
 exports.getUserCart = async(req, res) => {
 	try{
 
@@ -97,7 +98,7 @@ exports.getUserCart = async(req, res) => {
     }
 }
 
-//check needed if item is null?
+//delete Item with userId and itemName
 exports.deleteItemFromCart = async(req, res) =>{
     try{
         if(!req.body.userId || !req.body.itemName ){
@@ -123,6 +124,7 @@ exports.deleteItemFromCart = async(req, res) =>{
     }
 }
 
+//Increase quantity by one for item with given name and for a particular user
 exports.increaseQuantityOfItemInCart = async(req, res) =>{
     try{
         if(!req.body.userId || !req.body.itemName ){
@@ -151,7 +153,6 @@ exports.increaseQuantityOfItemInCart = async(req, res) =>{
         res.status(500).send(error);
     }
 }
-
 
 exports.decreaseQuantityOfItemInCart = async(req, res) =>{
     try{

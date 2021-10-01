@@ -10,6 +10,10 @@ const menuItemSchema = Schema({
         price: {
             type: Number,
             required: true
+        },
+        priceId: {
+            type: Schema.Types.ObjectId,
+            required: true
         }
     }, 
     {

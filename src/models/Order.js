@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const ORDER_STATUS = require('./constants/OrderStatus');
 const Schema = mongoose.Schema;
-const OrderStatus = require('./constants/OrderStatus');
+
 
 const orderSchema = Schema({
         user_id: {
@@ -8,10 +9,16 @@ const orderSchema = Schema({
             require: true,
             ref: 'User'
         },
-        
+        email: {
+          type: String,
+          require: true  
+        },
+        shipping_address: {
+            type: String,
+            require: true,
+        },
         order_summary: [{
-            type: Schema.Types.ObjectId,
-            ref: 'Item'
+            type: Schema.Types.Mixed,
         }],
 
         total: {
@@ -20,8 +27,10 @@ const orderSchema = Schema({
         },
 
         order_status: {
-            enum: OrderStatus,
-            default: OrderStatus.WAITING_FOR_PAYMENT
+
+            type: String,
+            enum: ORDER_STATUS,
+            default: ORDER_STATUS.WAITING_FOR_PAYMENT
         }
     }, 
     {
@@ -29,5 +38,5 @@ const orderSchema = Schema({
     }
 );
 
-const Order = mongoose.model('Order', orderSchema)
-module.exports = Order
+const Order = mongoose.model('Order', orderSchema);
+module.exports = Order;
