@@ -1,6 +1,5 @@
 
 exports.getHealth = async (req, res, next) => {
-    console.log("Reached here")
     try{
         res.status(200).send({"status": "UP"});
     }

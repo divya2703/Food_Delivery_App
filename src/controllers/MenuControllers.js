@@ -3,22 +3,24 @@ const data = require('../models/constants/Menu.json');
 
 exports.createMenu = async(req, res) => {
 	try{
-        await data.map(async(d)=>{
 
-            const item = await MenuItem.findOne({itemName: d.name});
+        for(let i=0; i<data.length; i++){
+            const temp = data[i];
+            const itemName = temp.itemName;
+            const price = temp.price;
+
+            const item = await MenuItem.findOne({itemName: itemName});
             if(item!=null){
-                console.log(item);
-                await MenuItem.findByIdAndUpdate(item._id, {price: d.price});
+                await MenuItem.findByIdAndUpdate(item._id, {price: price});
     
             }else{
                 const newItem = new MenuItem({
-                    itemName: d.name,
-                    price: d.price
+                    itemName: itemName,
+                    price: price
                 })
                await newItem.save();
             }
-          
-       })
+        }
 	}
 	catch (error) {
         res.status(500).json(error.message || "Internal Server Error");
