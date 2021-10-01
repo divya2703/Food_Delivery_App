@@ -5,7 +5,7 @@ const Order = require('../models/Order');
 const mongoose = require('mongoose');
 const ObjectId =  mongoose.Types.ObjectId;
 const ORDER_STATUS = require('../models/constants/OrderStatus');
-// See your keys here: https://dashboard.stripe.com/apikeys
+
 const stripe = require('stripe')('sk_test_51JfjUsSIqM3RN0omFCMMBXXVOagQuGrReMo6CiIG6YReKOJ2BK1xEysKfWr2v29mKoOwL26iv1Zm4SxTEDbJltZS00Pg26UY7E');
 const axios = require('axios');
 
@@ -34,8 +34,7 @@ exports.placeOrder = async(req, res) => {
 			else{
 				return res.status(302).send({"result": result.data});
 			}
-		}
-		
+		}	
 	}
 	catch(err){
 		res.status(500).send(err);

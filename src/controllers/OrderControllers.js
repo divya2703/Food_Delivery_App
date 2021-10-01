@@ -6,18 +6,26 @@ const User = require('../models/User');
 const ObjectId =  mongoose.Types.ObjectId;
 
 const getCartForUserId = async(userId)=>{
-    if(!userId)return null;
-    const cart = await Cart.find({'userId': userId});
-    let totalPrice = 0;
-    for(let i=0; i<cart.length; i++){
-    //   /  console.log(cart[i].totalPrice);
-        totalPrice += (cart[i].totalPrice);
+    try{
+        if(!userId)
+            return null;
+        const cart = await Cart.find({'userId': userId});
+        let totalPrice = 0;
+
+        //calculate totalPrice for the cart
+        for(let i=0; i<cart.length; i++){
+            totalPrice += (cart[i].totalPrice);
+        }
+    
+        return {
+            "finalPrice": totalPrice,
+            "cart": cart
+        }
+    }
+    catch(err){
+        console.error(err);
     }
     
-    return {
-        "finalPrice": totalPrice,
-        "cart": cart
-    }
 }
 
 const deleteCartForUserId = async(userId)=>{
@@ -25,7 +33,7 @@ const deleteCartForUserId = async(userId)=>{
         if(!userId)return null;
         const cart = await Cart.deleteMany({'userId': userId});
         return {
-            "msg": "Deletion successful"
+            "msg": `Cart deletion successful for userId ${userId}`
         }
     }
     catch(err){
@@ -37,7 +45,8 @@ exports.getOrders= async(req, res)=>{
     try{
         const orders = await Order.find({});
         res.status(200).send(orders);
-    }catch(err){
+    }
+    catch(err){
         res.status(500).send(err);
     }
     
@@ -65,13 +74,12 @@ exports.createOrder = async(req, res) =>{
             await newOrder.save();
             //console.log(newOrder)
             await deleteCartForUserId(userId);
-            res.status(201).send(newOrder);
-            return;
+            return res.status(201).send(newOrder);
+            
         }
-        res.status(200).send("Cannot create order for the user since cart is empty"); 
+        res.status(200).send({"msg": "Cannot create order for the user since cart is empty"}); 
     }
     catch(err){
-        console.log(err);
         res.status(500).send(err);
     }
 }
@@ -81,14 +89,16 @@ exports.deleteOrder = async(req, res) =>{
 
     try{
         if(!req.params.orderId){
-            res.status(400).send("No user with provided orderId");
-            return;
+            return res.status(400).send({"msg": "No user with provided orderId"});
+            
         }
         const docs = await Order.findByIdAndDelete(req.params.orderId);
-        res.status(200).send({"Deleted Order": docs});
+        res.status(200).send({
+            "msg": "Deletion successful",
+            "Deleted Order": docs
+        });
     }
     catch(err){
-        console.log(err);
         res.status(500).send(err);
     }
 }

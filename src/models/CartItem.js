@@ -4,16 +4,16 @@ const Schema  = mongoose.Schema;
 const cartItemSchema = Schema({
     userId: {
         type: Schema.Types.ObjectId,
-        require: true,
-
+        required: true,
     },
     itemName: {
         type: String,
-        require: true,
+        trim: true,
+        required: true,
     },
     price: {
         type: Number,
-        require: true,
+        required: true,
     },
     quantity: {
         type: Number,
@@ -23,6 +23,7 @@ const cartItemSchema = Schema({
         type: Number
     }
 })
+
 cartItemSchema.index({userId: 1, itemName: 1}, {unique: true});
 const CartItem = mongoose.model('CartItem', cartItemSchema );
 module.exports = CartItem;

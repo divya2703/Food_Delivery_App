@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
-// const CartItem = require('./CartItem').schema;
 const Schema = mongoose.Schema;
 
 const userSchema = Schema({
         name: {
             type: String,
             unique: true,
-            required: true
+            required: true,   
         },
         email: {
             type: String,
@@ -28,7 +27,6 @@ const userSchema = Schema({
         timestamps: true
     }
 );
-
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

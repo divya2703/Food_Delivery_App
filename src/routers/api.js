@@ -13,7 +13,6 @@ const orderController = require('../controllers/OrderControllers');
 
 router.get("/v1/users", userController.getUsers);
 router.post("/v1/users/register", userController.registerUser);
-
 router.post("/v1/users/login", userController.loginUser);
 router.get("/v1/protected", authMiddleware, userController.auth);
 
@@ -25,7 +24,6 @@ router.delete("/v1/menu", menuController.clearMenu);
 
 router.post("/v1/cart", cartController.addItemToCart);
 router.get("/v1/cart/:userId", cartController.getUserCart);
-// router.patch("/v1/cart", cartController.updateCartItem);
 router.delete("/v1/cart", cartController.deleteItemFromCart);
 router.patch("/v1/cart/add", cartController.increaseQuantityOfItemInCart);
 router.patch("/v1/cart/subtract", cartController.decreaseQuantityOfItemInCart);
@@ -33,6 +31,8 @@ router.patch("/v1/cart/subtract", cartController.decreaseQuantityOfItemInCart);
 router.post("/v1/order/:userId", orderController.createOrder);
 router.get("/v1/order/", orderController.getOrders);
 router.delete("/v1/order/:orderId", orderController.deleteOrder);
+
 router.post("/v1/payment", paymentController.createPayment);
 router.post("/v1/order/place/:orderId", paymentController.placeOrder);
+
 module.exports = router

@@ -17,7 +17,7 @@ const menuItemSchema = Schema({
     }
 );
 
-
+menuItemSchema.index({itemName: 1}, {unique: true});
 const MenuItem = mongoose.model('MenuItem', menuItemSchema);
 
 module.exports = MenuItem;

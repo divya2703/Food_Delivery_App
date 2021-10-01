@@ -2,32 +2,30 @@ const mongoose = require('mongoose');
 const ORDER_STATUS = require('./constants/OrderStatus');
 const Schema = mongoose.Schema;
 
-
 const orderSchema = Schema({
         user_id: {
             type: Schema.Types.ObjectId,
-            require: true,
+            required: true,
             ref: 'User'
         },
         email: {
           type: String,
-          require: true  
+          required: true ,
+          unique: true
         },
         shipping_address: {
             type: String,
-            require: true,
+            required: true,
+            trim: true,
         },
         order_summary: [{
             type: Schema.Types.Mixed,
         }],
-
         total: {
             type: Number,
-            require: true
+            required: true
         },
-
         order_status: {
-
             type: String,
             enum: ORDER_STATUS,
             default: ORDER_STATUS.WAITING_FOR_PAYMENT

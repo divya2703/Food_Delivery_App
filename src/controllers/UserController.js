@@ -35,7 +35,7 @@ exports.registerUser = async(req, res) =>{
     try {
 
         if(!req.body.password || !req.body.name || !req.body.email || !req.body.streetAddress){
-            res.status(402).send("name, password, streetAdress and email are all mandatory fields");
+            return res.status(402).send("name, password, streetAdress and email are all mandatory fields");
         }
         const name = req.body.name;
         const email = req.body.email;
@@ -83,7 +83,7 @@ exports.loginUser = async(req, res) =>{
         }
        // console.debug(user);
         const isValid = utils.validPassword(password, user.hash, user.salt);
-        console.debug(isValid)
+        //console.debug(isValid)
         if (isValid) {
             const tokenObject = utils.issueJWT(user);
             res.status(200).json({ success: true, token: tokenObject.token, expiresIn: tokenObject.expires });

@@ -1,10 +1,8 @@
 const ORDER_STATUS = {
-    PENDING: 1,
-    WAITING_FOR_PAYMENT: 2,
-    PLACED: 3,
-    CANCELLED: 4,
-    OUT_FOR_DELIVERY: 5,
-    DELIVERED: 6
+    WAITING_FOR_PAYMENT: 1,
+    PLACED: 2,
+    EMAIL_CONFIRMATION_SENT: 3
 };
+
 Object.freeze(ORDER_STATUS);
 module.exports = ORDER_STATUS

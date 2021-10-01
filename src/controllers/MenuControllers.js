@@ -34,7 +34,7 @@ exports.createMenu = async(req, res) => {
 exports.clearMenu = async(req, res) => {
 	try{
         MenuItem.collection.drop();
-        res.status(200).send({"msg":"Successfully cleared all items on menu"});
+        res.status(200).send({"msg": "Successfully cleared all items on menu"});
 	}
 	catch (error) {
         res.status(500).json(error.message || "Internal Server Error");
