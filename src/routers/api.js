@@ -34,6 +34,6 @@ router.delete("/v1/order/:orderId", authMiddleware, orderController.deleteOrder)
 
 router.post("/v1/order/place/:orderId", authMiddleware,paymentController.checkoutOrder);
 router.post("/v1/payment", authMiddleware, paymentController.createPayment);
-router.post("/v1/payment/confirmation", authMiddleware, paymentController.sendReciept2);
-
+router.post("/v1/payment/confirmation", paymentController.sendReciept3);
+router.post("/v1/payment/test", paymentController.test);
 module.exports = router

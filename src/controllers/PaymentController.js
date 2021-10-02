@@ -8,6 +8,9 @@ const ObjectId =  mongoose.Types.ObjectId;
 const stripe = require('stripe')('sk_test_51JfjUsSIqM3RN0omFCMMBXXVOagQuGrReMo6CiIG6YReKOJ2BK1xEysKfWr2v29mKoOwL26iv1Zm4SxTEDbJltZS00Pg26UY7E');
 var MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
 var DOMAIN = process.env.MAILGUN_DOMAIN;
+const CryptoJS = require('crypto-js');
+var FormData = require('form-data');
+
 //console.log(DOMAIN)
 var mailgun = require('mailgun-js');
 mailgun = mailgun({apiKey: MAILGUN_API_KEY, domain: DOMAIN});
@@ -159,3 +162,61 @@ exports.sendReciept2 = (req, res) =>{
 		console.error(err);
 	}
 }
+
+exports.test = async (req, res)=>{
+	var credentials = "api" + ":" + MAILGUN_API_KEY;
+	var credsArray = CryptoJS.enc.Utf8.parse(credentials);
+	var base64 = CryptoJS.enc.Base64.stringify(credsArray);
+	console.log(base64);
+	return res.status(200).send("All cool");
+}
+
+const getMailGunToken = async ()=>{
+	try{
+		var credentials = "api" + ":" + MAILGUN_API_KEY;
+		var credsArray = CryptoJS.enc.Utf8.parse(credentials);
+		var base64 = CryptoJS.enc.Base64.stringify(credsArray);
+		return base64;
+	}catch(err){
+		console.log(err);
+	}
+	
+}
+
+exports.sendReciept3 = async(req, res) =>{
+	try{
+		var data = new FormData();
+		data.append('from', 'divya@sandboxa6157570cc5f4c75a79b1e79ab9b73a5.mailgun.org\n');
+		data.append('to', 'mathsdivya27@gmail.com');
+		data.append('subject', 'Awesome mail');
+		data.append('text', 'Changing URL Placed');
+		const URL = 'https://api.mailgun.net/v3/sandboxa6157570cc5f4c75a79b1e79ab9b73a5.mailgun.org/messages';
+		var config = {
+    		method: 'post',
+    		url: URL,
+    		headers: { 
+    			'Authorization': 'Basic YXBpOmtleS03MDBhN2JkYWMyY2YwZWJiOTJiOGJhZjA0OWRmMzY3MQ==', 
+    			...data.getHeaders()
+  			},
+  			data : data
+		};
+
+		axios(config)
+		.then(function (response) {
+			console.log(JSON.stringify(response.data));
+  			res.status(200).send(response.data);
+		})
+		.catch(function (error) {
+			console.log(error.message);
+			res.status(400).send(error.message);
+		});
+	}
+	catch(err){
+		console.error(err);
+		res.status(400).send(err);
+	}
+}
+
+
+
+
