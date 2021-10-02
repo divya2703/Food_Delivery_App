@@ -9,8 +9,8 @@ const ObjectId =  mongoose.Types.ObjectId;
 const findItemByUserIdAndItemName = async(userId, itemName)=>{
     try{
         if(!userId || !itemName ){
-            console.log(typeof userId);
-            console.log("Input format unacceptable")
+           // console.log(typeof userId);
+           // console.log("Input format unacceptable")
             return null;
         }
         const item = await CartItem.findOne({userId: userId, itemName: itemName});
@@ -80,7 +80,7 @@ exports.getUserCart = async(req, res) => {
         } 
 
         const userId = ObjectId(req.params.userId);
-        console.log(userId);
+     //   console.log(userId);
         var user = await User.findOne({_id: userId});
         //console.log(user);
         if(!user){
