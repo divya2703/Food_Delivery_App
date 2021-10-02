@@ -1,13 +1,16 @@
 // Set your secret key. Remember to switch to your live secret key in production.
 
-const MenuItem = require('../models/MenuItem');
 const Order = require('../models/Order');
-const mongoose = require('mongoose');
-const ObjectId =  mongoose.Types.ObjectId;
 const ORDER_STATUS = require('../models/constants/OrderStatus');
-
-const stripe = require('stripe')('sk_test_51JfjUsSIqM3RN0omFCMMBXXVOagQuGrReMo6CiIG6YReKOJ2BK1xEysKfWr2v29mKoOwL26iv1Zm4SxTEDbJltZS00Pg26UY7E');
+const mongoose = require('mongoose');
 const axios = require('axios');
+const ObjectId =  mongoose.Types.ObjectId;
+const stripe = require('stripe')('sk_test_51JfjUsSIqM3RN0omFCMMBXXVOagQuGrReMo6CiIG6YReKOJ2BK1xEysKfWr2v29mKoOwL26iv1Zm4SxTEDbJltZS00Pg26UY7E');
+var MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
+var DOMAIN = process.env.MAILGUN_DOMAIN;
+//console.log(DOMAIN)
+var mailgun = require('mailgun-js');
+mailgun = mailgun({apiKey: MAILGUN_API_KEY, domain: DOMAIN});
 
 exports.checkoutOrder = async(req, res) => {
 	try{
@@ -29,6 +32,7 @@ exports.checkoutOrder = async(req, res) => {
 			const result = await axios.post('http://localhost:9001/v1/payment', orderDetails);
 			if(result.status == 200){
 				const docs = await Order.findByIdAndUpdate(orderId, {order_status: ORDER_STATUS.PLACED},{new: true});
+				//sendReciept("order", order.email);
 				return res.status(200).send({"msg": "successful", "order": docs});
 			}
 			else{
@@ -100,17 +104,49 @@ const generateResponse = (intent) => {
 	}
 };
 
-const sendReciept = (email_text, to_email) =>{
+exports.sendReciept = (req, res) =>{
 	try{
+		const email_text = req.body.email_text || "Hi there, your order is placed";
+		const to_email = req.body.to_email || "mathsdivya97@gmail.com";
+	
+		console.log(email_text);
 		const data = {
-			from: 'Excited User <me@samples.mailgun.org>',
+			from: from,
 			to: `foo@example.com, bar@example.com, ${to_email}`,
-			subject: 'Hello',
+			subject: 'Email Receipt',
 			text: email_text
 		};
 
 		mailgun.messages().send(data, (error, body) => {
-		console.log(body);
+			console.log(body);
+			console.log(error);
+			res.status(200).send(body);
+		});
+	}
+	catch(err){
+		console.error(err);
+	}
+}
+
+
+
+exports.sendReciept2 = (req, res) =>{
+	try{
+		const email_text = req.body.email_text || "Hi there, your order is placed";
+		const to_email = req.body.to_email || "mathsdivya97@gmail.com";
+		const from = 'divya@sandboxa6157570cc5f4c75a79b1e79ab9b73a5.mailgun.org';
+		
+		const data = {
+			from: from,
+			to: `${to_email}`,
+			subject: 'Order Receipt',
+			text: email_text
+		};
+		//console.log(data);
+		mailgun.messages().send(data, (error, body) => {
+			if(error)
+				res.status(400).send({error, body});
+			else res.status(200).send(body);
 		});
 	}
 	catch(err){

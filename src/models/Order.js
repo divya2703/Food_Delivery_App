@@ -11,7 +11,6 @@ const orderSchema = Schema({
         email: {
           type: String,
           required: true ,
-          unique: true
         },
         shipping_address: {
             type: String,

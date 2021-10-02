@@ -43,10 +43,31 @@ const deleteCartForUserId = async(userId)=>{
 
 exports.getOrders= async(req, res)=>{
     try{
-        const orders = await Order.find({});
+
+        const orders = await Order.aggregate([
+            {   
+                $sort: {
+                    updatedAt: -1,
+                }
+            },
+            {
+                $project: {  
+                    userId: '$user_id',
+                    totalPrice: '$total',
+                    orderStatus: '$order_status',
+                    email: 1, 
+                    shippingAddress: '$shipping_address',
+                    orderSummary: '$order_summary',
+                    createdAt: 1,
+                    updatedAt: 1,
+                    
+                },
+            }
+        ])
         res.status(200).send(orders);
     }
     catch(err){
+        console.log(err);
         res.status(500).send(err);
     }
     
@@ -56,8 +77,7 @@ exports.placeOrder = async(req, res) =>{
 
     try{
         if(!req.params.userId){
-            res.status(400).send("No user with provided userId");
-            return;
+            return res.status(400).send("No user with provided userId");
         }
         const userId = ObjectId(req.params.userId);
         const user = await User.findById(userId);
@@ -74,12 +94,24 @@ exports.placeOrder = async(req, res) =>{
             await newOrder.save();
             //console.log(newOrder)
             await deleteCartForUserId(userId);
-            return res.status(201).send(newOrder);
+            return res.status(201).send({
+                id: newOrder._id,
+                userId: newOrder.userId,
+                orderStatus: newOrder.order_status,
+                totalPrice: newOrder.total,
+                email: newOrder.email,
+                shippingAddress: newOrder.shipping_address,
+                orderSummary: newOrder.order_summary,
+                createdAt: newOrder.createdAt,
+                updatedAt: newOrder.updatedAt
+
+            });
             
         }
         res.status(200).send({"msg": "Cannot create order for the user since cart is empty"}); 
     }
     catch(err){
+        console.log(err);
         res.status(500).send(err);
     }
 }

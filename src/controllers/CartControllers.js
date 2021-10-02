@@ -35,7 +35,7 @@ exports.addItemToCart = async(req, res) => {
         const userId = ObjectId(req.body.userId);
         const quantity = req.body.quantity || 1;
         var item = await MenuItem.findOne({ itemName: itemName});
-        console.log("Item found");
+        //console.log("Item found");
         if(!item){
             console.error("Menu item not found for provided itemName");
             res.status(400).send({"error": "Menu item not found for provided itemName"});
@@ -47,7 +47,7 @@ exports.addItemToCart = async(req, res) => {
             res.status(500).send({"error": "No user with userId"});
             return;
         }
-        console.log("User found");
+        //console.log("User found");
         const itemPrev = await findItemByUserIdAndItemName(userId, itemName);
         if(itemPrev){
             res.status(200).send({"msg":"Cannot add to cart, item already exists for this user."});
