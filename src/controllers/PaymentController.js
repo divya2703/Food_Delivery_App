@@ -1,5 +1,3 @@
-// Set your secret key. Remember to switch to your live secret key in production.
-
 const Order = require('../models/Order');
 const ORDER_STATUS = require('../models/constants/OrderStatus');
 const mongoose = require('mongoose');
@@ -13,6 +11,7 @@ var FormData = require('form-data');
 
 //console.log(DOMAIN)
 var mailgun = require('mailgun-js');
+const { response } = require('express');
 mailgun = mailgun({apiKey: MAILGUN_API_KEY, domain: DOMAIN});
 
 exports.checkoutOrder = async(req, res) => {
@@ -40,8 +39,16 @@ exports.checkoutOrder = async(req, res) => {
 			});
 			if(result.status == 200){
 				const docs = await Order.findByIdAndUpdate(orderId, {order_status: ORDER_STATUS.PLACED},{new: true});
-				//sendReciept("order", order.email);
-				return res.status(200).send({"msg": "successful", "order": docs});
+
+				//Right now, we're only able to send mail to account with which I have created the mailgun account
+				//we can modify this to pass dynamic email address as second parameter
+				const resultFromSendEmail = await sendReciept("We're pleased to anounce that your order will be out for delivery soon");  
+				if(resultFromSendEmail!=null){
+					return res.status(200).send({"msg": "successful", "emailReceipt": "sent", "order": docs});
+				}
+				else {
+					return res.status(200).send({"msg": "successful","emailReceipt": "not sent", "order": docs});
+				} 
 			}
 			else{
 				return res.status(302).send({"result": result.data});
@@ -112,84 +119,16 @@ const generateResponse = (intent) => {
 	}
 };
 
-const sendReciept = (email_text, to_email) =>{
+const sendReciept = async(email_text) =>{
 	try{
-		const text = email_text || "Hi there, your order is placed";
-		const to = to_email || "mathsdivya97@gmail.com";
-		const from = 'divya@sandboxa6157570cc5f4c75a79b1e79ab9b73a5.mailgun.org';
-
-		//console.log(email_text);
-		const data = {
-			from: from,
-			to: to,
-			subject: 'Order Placed!!',
-			text: text
-		};
-
-		mailgun.messages().send(data, (error, body) => {
-			console.log(body);
-			console.log(error);
-			res.status(200).send(body);
-		});
-	}
-	catch(err){
-		console.error(err);
-	}
-}
-
-
-
-exports.sendReciept2 = (req, res) =>{
-	try{
-		const email_text = req.body.email_text || "Hi there, your order is placed";
-		const to_email = req.body.to_email || "mathsdivya97@gmail.com";
-		const from = 'divya@sandboxa6157570cc5f4c75a79b1e79ab9b73a5.mailgun.org';
-		
-		const data = {
-			from: from,
-			to: `${to_email}`,
-			subject: 'Order Receipt',
-			text: email_text
-		};
-		//console.log(data);
-		mailgun.messages().send(data, (error, body) => {
-			if(error)
-				res.status(400).send({error, body});
-			else res.status(200).send(body);
-		});
-	}
-	catch(err){
-		console.error(err);
-	}
-}
-
-exports.test = async (req, res)=>{
-	var credentials = "api" + ":" + MAILGUN_API_KEY;
-	var credsArray = CryptoJS.enc.Utf8.parse(credentials);
-	var base64 = CryptoJS.enc.Base64.stringify(credsArray);
-	console.log(base64);
-	return res.status(200).send("All cool");
-}
-
-const getMailGunToken = async ()=>{
-	try{
-		var credentials = "api" + ":" + MAILGUN_API_KEY;
-		var credsArray = CryptoJS.enc.Utf8.parse(credentials);
-		var base64 = CryptoJS.enc.Base64.stringify(credsArray);
-		return base64;
-	}catch(err){
-		console.log(err);
-	}
-	
-}
-
-exports.sendReciept3 = async(req, res) =>{
-	try{
+		const DEFAULT_MAIL = 'mathsdivya27@gmail.com';
+		console.log("Sending email to: "+ DEFAULT_MAIL);
+		email_text = email_text || 'Hurray! Your order is successfully Placed';
 		var data = new FormData();
 		data.append('from', 'divya@sandboxa6157570cc5f4c75a79b1e79ab9b73a5.mailgun.org\n');
-		data.append('to', 'mathsdivya27@gmail.com');
-		data.append('subject', 'Awesome mail');
-		data.append('text', 'Changing URL Placed');
+		data.append('to', DEFAULT_MAIL);
+		data.append('subject', 'Order Confirmation');
+		data.append('text', email_text);
 		const URL = 'https://api.mailgun.net/v3/sandboxa6157570cc5f4c75a79b1e79ab9b73a5.mailgun.org/messages';
 		var config = {
     		method: 'post',
@@ -201,21 +140,17 @@ exports.sendReciept3 = async(req, res) =>{
   			data : data
 		};
 
-		axios(config)
-		.then(function (response) {
-			console.log(JSON.stringify(response.data));
-  			res.status(200).send(response.data);
-		})
-		.catch(function (error) {
-			console.log(error.message);
-			res.status(400).send(error.message);
-		});
+		const result = await axios(config);
+		return result.data;
+		
 	}
 	catch(err){
 		console.error(err);
-		res.status(400).send(err);
+		return null;
 	}
 }
+
+
 
 
 
