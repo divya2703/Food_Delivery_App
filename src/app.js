@@ -3,7 +3,7 @@ require('dotenv').config();
 require('./db/db');
 
 
-const port = process.env.PORT || 9000;
+const port = process.env.APP_PORT || 9000;
 const app = express();
 const apiRouter = require('./routers/api')
 const passport = require('passport');

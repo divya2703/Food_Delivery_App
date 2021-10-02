@@ -14,7 +14,7 @@ mailgun = mailgun({apiKey: MAILGUN_API_KEY, domain: DOMAIN});
 
 exports.checkoutOrder = async(req, res) => {
 	try{
-		
+		const token = req.headers.authorization;
 		//console.log("Checking out to place order");
 		const orderId = ObjectId(req.params.orderId);
 		let order = await Order.findById(orderId);
@@ -29,7 +29,12 @@ exports.checkoutOrder = async(req, res) => {
 				"amount": order.total,
 				"email": order.email
 			}
-			const result = await axios.post('http://localhost:9001/v1/payment', orderDetails);
+			
+			const result = await axios.post('http://localhost:9001/v1/payment', orderDetails, {
+				headers: {
+					'Authorization': token
+				}
+			});
 			if(result.status == 200){
 				const docs = await Order.findByIdAndUpdate(orderId, {order_status: ORDER_STATUS.PLACED},{new: true});
 				//sendReciept("order", order.email);
@@ -104,17 +109,18 @@ const generateResponse = (intent) => {
 	}
 };
 
-exports.sendReciept = (req, res) =>{
+const sendReciept = (email_text, to_email) =>{
 	try{
-		const email_text = req.body.email_text || "Hi there, your order is placed";
-		const to_email = req.body.to_email || "mathsdivya97@gmail.com";
-	
-		console.log(email_text);
+		const text = email_text || "Hi there, your order is placed";
+		const to = to_email || "mathsdivya97@gmail.com";
+		const from = 'divya@sandboxa6157570cc5f4c75a79b1e79ab9b73a5.mailgun.org';
+
+		//console.log(email_text);
 		const data = {
 			from: from,
-			to: `foo@example.com, bar@example.com, ${to_email}`,
-			subject: 'Email Receipt',
-			text: email_text
+			to: to,
+			subject: 'Order Placed!!',
+			text: text
 		};
 
 		mailgun.messages().send(data, (error, body) => {

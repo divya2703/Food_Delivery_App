@@ -124,6 +124,9 @@ exports.deleteOrder = async(req, res) =>{
             
         }
         const docs = await Order.findByIdAndDelete(req.params.orderId);
+        if(docs == null){
+            return res.status(400).send({"msg": "No order with provided orderId exists"});
+        }
         res.status(200).send({
             "msg": "Deletion successful",
             "Deleted Order": docs

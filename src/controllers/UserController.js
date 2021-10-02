@@ -15,7 +15,7 @@ exports.getUsers = async(req, res) =>{
                     _id: 1,
                     name: 1,
                     email: 1, 
-                    street_address: 1,
+                    streetAddress: '$street_address',
                     createdAt: 1,
                     updatedAt: 1,
                     
