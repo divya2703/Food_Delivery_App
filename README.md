@@ -1,4 +1,4 @@
-# OREN DEMO-FOOD-DELIVERY-APP
+# DEMO-FOOD-DELIVERY-APP
 This application is built using NodeJS. Mongo DB is used for data persistence. Mongoose driver is used to interact with
 MongoDB collection through NodeJS code. 
 
